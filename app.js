@@ -1,4 +1,8 @@
 //jshint esversion:6
+
+// Very important that 'dotenv' is at the very top or you will not be able able to access the environment variable
+// You do not need a const and all you have to do is call 'config'
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -19,10 +23,11 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
-// We will use this secret to encrypt our database
-const secret = "Thisisourlittlesecret.";
 // This will encrypt our entire database
-userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"] });
+userSchema.plugin(encrypt, {
+  secret: process.env.SECRET,
+  encryptedFields: ["password"],
+});
 
 // Now you can create new users adding it to the userDB
 const User = new mongoose.model("User", userSchema);
