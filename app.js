@@ -7,7 +7,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const encrypt = require("mongoose-encryption");
+const md5 = require("md5");
 
 const app = express();
 
@@ -21,12 +21,6 @@ mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
-});
-
-// This will encrypt our entire database
-userSchema.plugin(encrypt, {
-  secret: process.env.SECRET,
-  encryptedFields: ["password"],
 });
 
 // Now you can create new users adding it to the userDB
@@ -49,7 +43,7 @@ app.post("/register", function (req, res) {
     // this will capture whatever the user types in the username field
     email: req.body.username,
     // this will capture whatever the user types in the password field
-    password: req.body.password,
+    password: md5(eq.body.password),
   });
 
   newUser.save(function (err) {
